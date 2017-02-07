@@ -6,334 +6,508 @@ using System.Text;
 public class FractalTree : MonoBehaviour {
 
 	public bool debug = true;
+    private bool habilitado = true;
+    private bool folhaTri = false;
 
-	public Dictionary<char, string> rules = new Dictionary<char, string>();
-	[Range(0,6)]
+    public void AtivaFolhasTri() {
+       folhaTri=true;
+       GenerateTree();
+   }
+   public void DesativaFolhasTri() {
+       folhaTri=false;
+       GenerateTree();
+   }
+
+
+   public Dictionary<char, string> regras = new Dictionary<char, string>();
+   [Range(0,20)]
     //Interações
-	public int iterations = 4;
+   public int interacao = 0;
     //Axioma
-	public string input = "I";
+   public string input = "A";
     //Saida resultante das interacoes
-	private string output;
-	[ReadOnly]
-	public string result;
+   private string regrasAtuais;
+   [ReadOnly]
+   public string result;
 
-	List<point> cauleprincipal = new List<point>();
-	List<point> caulesecundario = new List<point>();
-	List<GameObject> objetos = new List<GameObject>();
+   List<GameObject> objetos = new List<GameObject>();
+   List<GameObject> primeirasObj = new List<GameObject>();
+   List<point> cauleprincipal = new List<point>();
     //Lista das primeiras folhas
-	List<point> primeirasList = new List<point>();
+   List<point> primeirasfolhas = new List<point>();
+   List<point> caulesecundario = new List<point>();
+   List<point> folhastrifoliadas = new List<point>();
+   List<point> flores  = new List<point>();
 
     //Game object cilindro usado como referencia
-	public GameObject cylinder;
-	public GameObject PrimeirasFolhas;
+   public GameObject Slide;
+   public GameObject cylinder;
+   public GameObject PrimeirasFolhas;
+   public GameObject FolhaTrifoliada;
+   public GameObject Flor;
+   public GameObject Flor2;
+   public GameObject Vagem;
+
+    private int ValorSlide;
+
+
+   private struct point
+   {
+      public point(Vector3 rP, Vector3 rA, float rL) { Point = rP; Angle = rA; BranchLength = rL; }
+      public Vector3 Point;
+      public Vector3 Angle;
+      public float BranchLength;
+  }
+	// Pivot point1 around point2 by angles
+  private Vector3 pivot(Vector3 point1, Vector3 point2, Vector3 angles)
+  {
+      Vector3 dir = point1 - point2;
+      dir = Quaternion.Euler(angles) * dir;
+      point1 = dir + point2;
+      return point1;
+  }
 
     // Use this for initialization
-	void Start () {
-		GenerateTree();
-	}
+  void Start () {
+      GenerateTree();
+  }
 
-	public void GenerateTree()
-	{   
-        //Limpa as listas
-		rules.Clear();
-		cauleprincipal.Clear();
-		primeirasList.Clear();
-		caulesecundario.Clear();
-		foreach (GameObject obj in objetos)
-		{
-            //Object.Destroy(obj);
-			Object.DestroyImmediate(obj);
-		}
-		objetos.Clear();
+  public void GenerateTree()
+  {   
+    if(habilitado) {
+        LimpaObjetos();
 
-        // Regras
-        // Key is replaced by value
-		rules.Add('I', "I[+z][-z]A");
-		rules.Add('A', "S[+iL][-L]B");
-		rules.Add('B', "S[+C]A");
-		rules.Add('C', "p[iL][iL][-iL]");
+       	// Regras
+        if(interacao==1) {
+            regras.Add('A', "I[+z][-z]A");
+        }
+        else {
+            regras.Add('A', "I[+z][-z]B");
+            regras.Add('B', "I[+C]D");
 
-		output = input;
-        // Aplica as regras de acordo com as interacoes
-		for (int i = 0; i < iterations; i++){
-			output = applyRules(output);
-		}
+            if(interacao % 2 == 0) { 
+                if(interacao>13) {
+                    regras.Add('C', "[-f+f-f]p[-L]");
+                }  
+                else {
+                    regras.Add('C', "p[-L]");
+                }
+            }
+            else {
+                if(interacao>13) {                   
+                    regras.Add('C', "[+f-f+f]p[+L]");
+                }  
+                else {
+                    regras.Add('C', "p[+L]");
+                }
+            }
 
-        //Regras obtidas
-		result = output;
-        //Transforma as regras em pontos
-		determinecauleprincipal(output);
+            regras.Add('D', "I[-C]A");
+        } 	
+
+        regrasAtuais = input;
+
+        //Transforma as regras em gramatica formal(sequencia)
+        for (int i = 0; i < interacao; i++){
+         regrasAtuais = AplicaRegras(regrasAtuais);
+     }
+
+        //Regras obtidas(Usado apenas na unity)
+     result = regrasAtuais;
+
+        //Transforma as regras em pontos na lista
+     TransformaRegras(regrasAtuais);
 
         //Transforma os pontos em cilindros
-		CriarCaulePrincipais();
+     Redenriza3D();
+ }
+}
 
-		CriarPrimeirasFolhas();
 
-		CriarCauleSecundarios();
+private void LimpaObjetos() {
+	//Limpa as listas de pontos e GameObjetos
+	regras.Clear();
+	cauleprincipal.Clear();
+	primeirasfolhas.Clear();
+	caulesecundario.Clear();
+	folhastrifoliadas.Clear();
+    flores.Clear();
+    foreach (GameObject obj in objetos)
+    {
+      Object.DestroyImmediate(obj);
+  }
+  objetos.Clear();
+}
 
-	}
 
-	private string applyRules(string p_input)
-	{
-		StringBuilder sb = new StringBuilder();
-        // Loop through characters in the input string
-		foreach (char c in p_input)
+private string AplicaRegras(string p_input)
+{
+	StringBuilder sb = new StringBuilder();
+    // Loop through characters in the input string
+	foreach (char c in p_input)	{
+        // If character matches key in rules, then replace character with rhs of rule
+		if (regras.ContainsKey(c))
 		{
-            // If character matches key in rules, then replace character with rhs of rule
-			if (rules.ContainsKey(c))
-			{
-				sb.Append(rules[c]);
-			}
-            // If not, keep the character
-			else
-			{
-				sb.Append(c);
-			}
+			sb.Append(regras[c]);
 		}
-        // Return string with rules applied
-		return sb.ToString();
-	}
-
-	struct point
-	{
-		public point(Vector3 rP, Vector3 rA, float rL) { Point = rP; Angle = rA; BranchLength = rL; }
-		public Vector3 Point;
-		public Vector3 Angle;
-		public float BranchLength;
-	}
-
-    //TRANSFORMA AS REGRAS EM PONTOS
-	private void determinecauleprincipal(string p_input)
-	{
-        //Cria uma pilha chamada returnValue
-        //Passando a struct point como elemento
-		Stack<point> returnValues = new Stack<point>();
-		point lastPoint = new point(Vector3.zero, Vector3.zero, 1f);
-		point primeirasPonto = new point(Vector3.zero, Vector3.zero, 1f);
-		returnValues.Push(lastPoint);
-
-		foreach (char c in p_input)
+        // If not, keep the character
+		else
 		{
-			switch (c)
-			{
-                //Caule principal
-                case 'I': // Draw line of length lastBranchLength, in direction of lastAngle
-                cauleprincipal.Add(lastPoint);
-
-                point caule = new point(lastPoint.Point + new Vector3(0, 0.5f, 0), lastPoint.Angle, 0.5f);
-                caule.BranchLength = lastPoint.BranchLength;
-                if (caule.BranchLength <= 0.0f) caule.BranchLength = 0.001f;
-
-                caule.Angle.y = lastPoint.Angle.y + UnityEngine.Random.Range(-30, 30);
-
-                caule.Point = pivot(caule.Point, lastPoint.Point, new Vector3(caule.Angle.x, 0, 0));
-                caule.Point = pivot(caule.Point, lastPoint.Point, new Vector3(0, caule.Angle.y, 0));
-
-                cauleprincipal.Add(caule);
-                lastPoint = caule;
-                break;
+			sb.Append(c);
+		}
+	}
+    // Return string with rules applied
+	return sb.ToString();
+}
 
 
-                //Primeiras folhas
-                case 'z': // Draw line of length lastBranchLength, in direction of lastAngle
-                //Cria um ponto na struct passando como referencia ((posicao inicial + posicao final), rotacao, e nao sei
-                point folhas = new point(primeirasPonto.Point, primeirasPonto.Angle, 1f);
-              
-                primeirasList.Add(folhas);
-            
-                break;
+//TRANSFORMA AS REGRAS EM PONTOS
+private void TransformaRegras(string p_input)
+{
+    //Cria uma pilha chamada returnValue
+    //Passando a struct point como elemento
+	Stack<point> returnValues = new Stack<point>();
+	point lastPoint = new point(Vector3.zero, Vector3.zero, 1f);
+	point primeirasPonto = new point(Vector3.zero, Vector3.zero, 1f);
+	point folhasPonto = new point(Vector3.zero, Vector3.zero, 1f);
+	returnValues.Push(lastPoint);
 
-                case 'S': // Draw line of length lastBranchLength, in direction of lastAngle
-                caulesecundario.Add(lastPoint);
+	foreach (char c in p_input)
+	{
+		switch (c)
+		{
 
-                point newPoint = new point(lastPoint.Point + new Vector3(0, 0.5f, 0), lastPoint.Angle, 0.5f);
-                newPoint.BranchLength = lastPoint.BranchLength;
-                if (newPoint.BranchLength <= 0.0f) newPoint.BranchLength = 0.001f;
+          case 'I': //Cria Caule principal
+          cauleprincipal.Add(lastPoint);
 
-                newPoint.Angle.y = lastPoint.Angle.y + UnityEngine.Random.Range(-30, 30);
+          point caule = new point(lastPoint.Point + new Vector3(0, 0.08f, 0), lastPoint.Angle, 0.5f);
 
-                newPoint.Point = pivot(newPoint.Point, lastPoint.Point, new Vector3(newPoint.Angle.x, 0, 0));
-                newPoint.Point = pivot(newPoint.Point, lastPoint.Point, new Vector3(0, newPoint.Angle.y, 0));
+            //Efeito retorcido do caule     
+          caule.Angle.x = lastPoint.Angle.y + UnityEngine.Random.Range(-15, 15);
+          caule.Point = pivot(caule.Point, lastPoint.Point, new Vector3(caule.Angle.x, 0, 0));
+          caule.Point = pivot(caule.Point, lastPoint.Point, new Vector3(0, caule.Angle.y, 0));
 
-                caulesecundario.Add(newPoint);
-                lastPoint = newPoint;
-                break;
+          cauleprincipal.Add(caule);
+          lastPoint = caule;
+          break;
+          
+            case 'p': //Cria Caule Secundario
+            caulesecundario.Add(lastPoint);
 
-               //Folhas trifoliadas
-                case 'L': // Draw line of length lastBranchLength, in direction of lastAngle
-          		caulesecundario.Add(lastPoint);
+            point newPoint = new point(lastPoint.Point , lastPoint.Angle, 0.5f);
 
-                point newPoint2 = new point(lastPoint.Point + new Vector3(0, 0.5f, 0), lastPoint.Angle, 0.5f);
-                newPoint2.BranchLength = lastPoint.BranchLength;
-                if (newPoint2.BranchLength <= 0.0f) newPoint2.BranchLength = 0.001f;
+            //Cria os pontos para as folhas serem redenrizadas
+            //newPoint.Angle.x = lastPoint.Angle.y + UnityEngine.Random.Range(-90, 30);
+            newPoint.Point = pivot(newPoint.Point+(new Vector3(0,0.7f,0)), lastPoint.Point, new Vector3(newPoint.Angle.x, 0, 0));
+            newPoint.Point = pivot(newPoint.Point, lastPoint.Point, new Vector3(0, newPoint.Angle.y, 0));
 
-                newPoint2.Angle.y = lastPoint.Angle.y + UnityEngine.Random.Range(-30, 30);
+            caulesecundario.Add(newPoint);
+            lastPoint = newPoint;
+            break;
 
-                newPoint2.Point = pivot(newPoint2.Point, lastPoint.Point, new Vector3(newPoint2.Angle.x, 0, 0));
-                newPoint2.Point = pivot(newPoint2.Point, lastPoint.Point, new Vector3(0, newPoint2.Angle.y, 0));
+            case 'z': //Cria Primeiras folhas
+            point folhas = new point(primeirasPonto.Point, primeirasPonto.Angle, 1f);              
+            primeirasfolhas.Add(folhas);            
+            break;
 
-                caulesecundario.Add(newPoint2);
-                lastPoint = newPoint2;
-                break;
+            case 'L': //Cria Folhas trifoliadas                      
+            point newPoint2 = new point(lastPoint.Point , lastPoint.Angle, 0.5f);       
+            folhastrifoliadas.Add(newPoint2);
+            lastPoint = newPoint2;
+            break;
 
-                //Regiao Foliar
-                case 'p': // Draw line of length lastBranchLength, in direction of lastAngle
-                // cauleprincipal.Add(lastPoint);
+            case 'f': //Cria Flor          
+            point flor = new point(lastPoint.Point , lastPoint.Angle, 0.5f);
 
-                // point regiaoFolhiar = new point(lastPoint.Point + new Vector3(0, lastPoint.BranchLength, 0), lastPoint.Angle, 1f);
-                // newPoint.BranchLength = lastPoint.BranchLength - 0.02f;
-                // if (newPoint.BranchLength <= 0.0f) newPoint.BranchLength = 0.001f;
+            flores.Add(flor);
+            lastPoint = flor;
+            break;
 
-                // newPoint.Angle.y = lastPoint.Angle.y + UnityEngine.Random.Range(-30, 30);
+            case '+': // Rotate +30
+            //Inclinacao              
+            lastPoint.Angle.x += 50.0f;  
+            //Rotacao
+            lastPoint.Angle.y += 31.0f;  
+            break;
 
-                // newPoint.Point = pivot(regiaoFolhiar.Point, lastPoint.Point, new Vector3(regiaoFolhiar.Angle.x, 0, 0));
-                // newPoint.Point = pivot(newPoint.Point, lastPoint.Point, new Vector3(0, newPoint.Angle.y, 0));
+            case '-': // Rotate -30 
+            primeirasPonto.Angle.y += 180.0f;   
+            primeirasPonto.Point.z = -0.1f; 
+            primeirasPonto.Point.x = -0.065f;
 
-                // cauleprincipal.Add(regiaoFolhiar);
-                // lastPoint = regiaoFolhiar;
-                break;
 
-                case '+': // Rotate +30
-                primeirasPonto.Angle.y += 0;               
-                lastPoint.Angle.x += 30.0f;  
-                lastPoint.Angle.y += 90.0f;  
-                break;
+            lastPoint.Angle.x += -50.0f; 
+            lastPoint.Angle.y += 31.0f; 
+            break;
 
-                case '[': // Save State
-                returnValues.Push(lastPoint);
-                break;
+            case '[': // Save State
+            returnValues.Push(lastPoint);
+            break;
 
-                case '-': // Rotate -30 
-                primeirasPonto.Angle.y += 180.0f;   
-                primeirasPonto.Point.x = 0.55f;  
-
-                lastPoint.Angle.x += -30.0f; 
-                lastPoint.Angle.y += 90.0f; 
-                break;
-
-                case ']': // Load Saved State
-                lastPoint = returnValues.Pop();
-                break;
-            }
+            case ']': // Load Saved State
+            lastPoint = returnValues.Pop();
+            break;
         }
     }
-    //Percorre lista de caule principal para criar o objeto
-    private void CriarCaulePrincipais()
+}
+
+private void Redenriza3D(){
+	//Percorre lista de caule principal para criar o objeto
+	for (int i = 0; i < cauleprincipal.Count; i += 2)	{
+		CriarCaulePrincipal(cauleprincipal[i], cauleprincipal[i + 1], 0.1f);
+	}
+	//Percorre lista de caule secundario para criar o objeto
+    for (int i = 0; i < caulesecundario.Count; i += 2)
     {
-    	for (int i = 0; i < cauleprincipal.Count; i += 2)
-    	{
-    		CriarCaulePrincipal(cauleprincipal[i], cauleprincipal[i + 1], 0.1f);
-    	}
+      CriarCauleSecundario(caulesecundario[i], caulesecundario[i + 1], 0.1f);
+  }
+
+	//Percorre a lista de primeiras folhas passando o angulo e a posicao para ser criado o objeto
+  for (int i = 0; i < primeirasfolhas.Count; i += 1){
+      CriarPrimeiraFolha(primeirasfolhas[i].Angle,primeirasfolhas[i]);
+  }
+
+	//Percorre lista de folhas trifoliadas
+  for (int i = 0; i < folhastrifoliadas.Count; i += 1)
+  {
+      CriarFolhaTrifoliada(folhastrifoliadas[i],folhastrifoliadas[i].Angle);
+  }
+
+  if(interacao==14 || interacao==15){
+        //Percorre lista de Flores
+        for (int i = 0; i < flores.Count; i += 1)
+        {
+            CriarFlor(flores[i],flores[i].Angle, Flor);
+        }
     }
+    if(interacao==16){
+        //Percorre lista de Flores
+        for (int i = 0; i < flores.Count; i += 1)
+        {
+            CriarFlor(flores[i],flores[i].Angle, Flor2);
+        }
+    } 
+    if(interacao==17){
+        //Percorre lista de Flores
+        for (int i = 0; i < flores.Count; i += 1)
+        {
+            CriarFlor(flores[i],flores[i].Angle, Vagem);
+        }
+    } 
 
-    //Percorre a lista de Folhas passando o angulo e a posicao para ser criado o objeto
-    private void CriarPrimeirasFolhas()
-    {
-    	for (int i = 0; i < primeirasList.Count; i += 1)
-    	{
-    		CriarPrimeiraFolha(primeirasList[i].Angle,primeirasList[i]);
-    	}
+}
+
+private void CriarCaulePrincipal(point point1, point point2, float radius)
+{
+    //UnityEngine.Random.Range(0,3);
+    //Cria o cilindro, de acordo com o cilindro passado como referencia
+	GameObject newCylinder = (GameObject)Instantiate(cylinder);
+    //Seta esse cilindro como ativo, porque o cilindro passado por referencia esta invisivel
+	newCylinder.SetActive(true);
+
+    //Comprimento do ramo(1 ponto ao outro)
+	float length = Vector3.Distance(point2.Point, point1.Point);
+	radius = radius * length;
+
+    //Scale o tamanho do cylindro(x,y,z) y = comprimento
+	Vector3 scale = new Vector3(0.03f, 0.05f , 0.03f);
+	newCylinder.transform.localScale = scale;
+
+    //Seta o ponto inicial dos cilindros como o mesmo do seu ramo
+	newCylinder.transform.position = point1.Point;
+    //Rotaciona de acordo com a regra + ou -
+	newCylinder.transform.Rotate(point2.Angle);
+    //Coloca todos os ramos como Parent do Object Soja3D
+	newCylinder.transform.parent = this.transform;
+    //Adicione o cilindro a Lista para que sejam deletados de acordo com a interação
+	objetos.Add(newCylinder);
+}
+
+private void CriarCauleSecundario(point point1, point point2, float radius)
+{
+    //UnityEngine.Random.Range(0,3);
+    //Cria o cilindro, de acordo com o cilindro passado como referencia
+	GameObject newCylinder = (GameObject)Instantiate(cylinder);
+    //Seta esse cilindro como ativo, porque o cilindro passado por referencia esta invisivel
+	newCylinder.SetActive(true);
+
+    //Scale o tamanho do cylindro(x,y,z) y = comprimento
+	Vector3 scale = new Vector3(0.01f, 0.3f , 0.01f);
+	newCylinder.transform.localScale = scale;
+
+    //Seta o ponto inicial dos cilindros como o mesmo do seu ramo
+	newCylinder.transform.position = (point1.Point + new Vector3(0,0.05f,0));
+    //Rotaciona de acordo com a regra + ou -
+	newCylinder.transform.Rotate(point2.Angle);
+    //Coloca todos os ramos como Parent do Object Soja3D
+	newCylinder.transform.parent = this.transform;
+    //Adicione o cilindro a Lista para que sejam deletados de acordo com a interação
+	objetos.Add(newCylinder);
+}
+
+private void CriarPrimeiraFolha(Vector3 angle, point point1)
+{
+    //UnityEngine.Random.Range(0,3);
+    //Cria o cilindro, de acordo com o cilindro passado como referencia
+	GameObject folha = (GameObject)Instantiate(PrimeirasFolhas);
+    //Seta esse cilindro como ativo, porque o cilindro passado por referencia esta invisivel
+	folha.SetActive(true);
+	folha.transform.Rotate(angle);
+	folha.transform.position +=point1.Point;
+
+    //Coloca todos os ramos como Parent do Object Soja3D
+	folha.transform.parent = this.transform;
+    //Adicione o cilindro a Lista para que sejam deletados de acordo com a interação
+	primeirasObj.Add(folha);
+}
+
+private void CriarFolhaTrifoliada(point point1, Vector3 angle)
+{
+
+    GameObject trifoliada = (GameObject)Instantiate(FolhaTrifoliada);
+    //Seta esse cilindro como ativo, porque o cilindro passado por referencia esta invisivel
+    trifoliada.SetActive(folhaTri);
+
+    //trifoliada.transform.Rotate(angle);
+    //Seta o ponto inicial dos cilindros como o mesmo do seu ramo
+    trifoliada.transform.position = (point1.Point);
+
+    //Coloca todos os ramos como Parent do Object Soja3D
+    trifoliada.transform.parent = this.transform;
+    //Adicione o cilindro a Lista para que sejam deletados de acordo com a interação
+    objetos.Add(trifoliada);
+}
+
+private void CriarFlor(point point1, Vector3 angle,GameObject qual_flor)
+{
+
+    GameObject flor = (GameObject)Instantiate(qual_flor);
+    //Seta esse cilindro como ativo, porque o cilindro passado por referencia esta invisivel
+    flor.SetActive(flor);
+
+    //trifoliada.transform.Rotate(angle);
+    //Seta o ponto inicial dos cilindros como o mesmo do seu ramo
+    flor.transform.position = (point1.Point + new Vector3(0,0.06f,0));
+    flor.transform.Rotate(point1.Angle);
+
+    //Coloca todos os ramos como Parent do Object Soja3D
+    flor.transform.parent = this.transform;
+    //Adicione o cilindro a Lista para que sejam deletados de acordo com a interação
+    objetos.Add(flor);
+}
+
+// Update is called once per frame
+void Update ()
+{
+    this.ValorSlide = (int)Slide.GetComponent<Slider>().valorSlider;
+
+    if(this.ValorSlide == 0 ){
+        this.interacao = 0;
+        GenerateTree();
+        habilitado = false;
     }
-
-    //Percorre lista de caule principal para criar o objeto
-    private void CriarCauleSecundarios()
-    { 
-    
-    	for (int i = 0; i < caulesecundario.Count; i += 2)
-    	{
-    		CriarCauleSecundario(caulesecundario[i], caulesecundario[i + 1], 0.1f);
-    	}
+    if(this.ValorSlide == 7 ){
+        this.interacao = 1;
+        GenerateTree();
+        habilitado = false;
     }
- 
-
-    // Pivot point1 around point2 by angles
-    private Vector3 pivot(Vector3 point1, Vector3 point2, Vector3 angles)
-    {
-    	Vector3 dir = point1 - point2;
-    	dir = Quaternion.Euler(angles) * dir;
-    	point1 = dir + point2;
-    	return point1;
+    else if(this.ValorSlide == 8 ){
+        this.interacao = 2;
+        GenerateTree();
+        habilitado = false;
     }
-
-    private void CriarCaulePrincipal(point point1, point point2, float radius)
-    {
-        //UnityEngine.Random.Range(0,3);
-        //Cria o cilindro, de acordo com o cilindro passado como referencia
-    	GameObject newCylinder = (GameObject)Instantiate(cylinder);
-        //Seta esse cilindro como ativo, porque o cilindro passado por referencia esta invisivel
-    	newCylinder.SetActive(true);
-
-        //Comprimento do ramo(1 ponto ao outro)
-    	float length = Vector3.Distance(point2.Point, point1.Point);
-    	radius = radius * length;
-
-        //Scale o tamanho do cylindro(x,y,z) y = comprimento
-    	Vector3 scale = new Vector3(0.05f, 0.5f , 0.05f);
-    	newCylinder.transform.localScale = scale;
-
-        //Seta o ponto inicial dos cilindros como o mesmo do seu ramo
-    	newCylinder.transform.position = point1.Point;
-        //Rotaciona de acordo com a regra + ou -
-    	newCylinder.transform.Rotate(point2.Angle);
-        //Coloca todos os ramos como Parent do Object Soja3D
-    	newCylinder.transform.parent = this.transform;
-        //Adicione o cilindro a Lista para que sejam deletados de acordo com a interação
-    	objetos.Add(newCylinder);
+    else if(this.ValorSlide == 10 ){
+        interacao = 3;
+        GenerateTree();
+        habilitado = false;
     }
+    else if(this.ValorSlide == 13 ){
+        interacao = 4;
 
-    private void CriarCauleSecundario(point point1, point point2, float radius)
-    {
-        //UnityEngine.Random.Range(0,3);
-        //Cria o cilindro, de acordo com o cilindro passado como referencia
-    	GameObject newCylinder = (GameObject)Instantiate(cylinder);
-        //Seta esse cilindro como ativo, porque o cilindro passado por referencia esta invisivel
-    	newCylinder.SetActive(true);
-
-        //Comprimento do ramo(1 ponto ao outro)
-    	float length = Vector3.Distance(point2.Point, point1.Point);
-    	radius = radius * length;
-
-        //Scale o tamanho do cylindro(x,y,z) y = comprimento
-    	Vector3 scale = new Vector3(0.05f, 0.5f , 0.05f);
-    	newCylinder.transform.localScale = scale;
-
-        //Seta o ponto inicial dos cilindros como o mesmo do seu ramo
-    	newCylinder.transform.position = (point1.Point + new Vector3(0,0.5f,0));
-        //Rotaciona de acordo com a regra + ou -
-    	newCylinder.transform.Rotate(point2.Angle);
-        //Coloca todos os ramos como Parent do Object Soja3D
-    	newCylinder.transform.parent = this.transform;
-        //Adicione o cilindro a Lista para que sejam deletados de acordo com a interação
-    	objetos.Add(newCylinder);
+        GenerateTree();
+        habilitado = false;
     }
-
-    private void CriarPrimeiraFolha(Vector3 angle, point point1)
-    {
-        //UnityEngine.Random.Range(0,3);
-        //Cria o cilindro, de acordo com o cilindro passado como referencia
-    	GameObject folha = (GameObject)Instantiate(PrimeirasFolhas);
-        //Seta esse cilindro como ativo, porque o cilindro passado por referencia esta invisivel
-    	folha.SetActive(true);
-    	folha.transform.Rotate(angle);
-    	folha.transform.position +=point1.Point;
-    
-        //Coloca todos os ramos como Parent do Object Soja3D
-    	folha.transform.parent = this.transform;
-        //Adicione o cilindro a Lista para que sejam deletados de acordo com a interação
-    	objetos.Add(folha);
+    else if(this.ValorSlide == 16 ){
+        interacao = 5;
+        GenerateTree();
+        habilitado = false;
     }
-
-    // Update is called once per frame
-    void Update ()
-    {
-        //Se ativado, não destroi os ramos criados para que seja possivel estudar cada ramo
-    	if (debug)
-    	{
-    		for (int i = 0; i < cauleprincipal.Count; i += 2)
-    		{
-    			Debug.DrawLine(cauleprincipal[i].Point, cauleprincipal[i + 1].Point, Color.black);
-    		}
-    	}
+    else if(this.ValorSlide == 17 ){
+        interacao = 6;
+        GenerateTree();
+        habilitado = false;
     }
+    else if(this.ValorSlide == 20 ){
+        interacao = 7;
+        GenerateTree();
+        habilitado = false;
+    }
+    else if(this.ValorSlide == 21 ){
+        interacao = 8;
+        GenerateTree();
+        habilitado = false;
+    }
+    else if(this.ValorSlide == 22 ){
+        interacao = 9;
+        GenerateTree();
+        habilitado = false;
+    }
+    else if(this.ValorSlide == 23 ){
+        interacao = 9;
+        GenerateTree();
+        habilitado = false;
+    }
+    else if(this.ValorSlide == 24 ){
+        interacao = 10;
+        GenerateTree();
+        habilitado = false;
+    }
+    else if(this.ValorSlide == 27 ){
+        interacao = 11;
+        GenerateTree();
+        habilitado = false;
+    }
+    else if(this.ValorSlide == 29 ){
+        interacao = 12;
+        GenerateTree();
+        habilitado = false;
+    }
+    else if(this.ValorSlide == 33 ){
+        interacao = 13;
+        GenerateTree();
+        habilitado = false;
+    }
+      ///Reprodutivo
+    else if(this.ValorSlide == 35 ){
+        interacao = 14;
+        GenerateTree();
+        habilitado = false;
+    }
+    else if(this.ValorSlide == 37 ){
+        interacao = 15;
+        GenerateTree();
+        habilitado = false;
+    }
+    //R2
+    else if(this.ValorSlide == 60 ){
+        interacao = 16;
+        GenerateTree();
+        habilitado = false;
+    }
+    else if(this.ValorSlide == 72 ){
+        interacao = 17;
+        GenerateTree();
+        habilitado = false;
+    }
+    else {
+     habilitado = true;
+ }
+
+    //Se ativado, não destroi os ramos criados para que seja possivel estudar cada ramo
+ if (debug){
+  for (int i = 0; i < cauleprincipal.Count; i += 2){
+     Debug.DrawLine(cauleprincipal[i].Point, cauleprincipal[i + 1].Point, Color.black);
+ }
+}
+}
 }
