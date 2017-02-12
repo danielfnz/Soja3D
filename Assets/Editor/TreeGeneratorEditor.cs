@@ -2,12 +2,12 @@
 using System.Collections;
 using UnityEditor;
 
-[CustomEditor(typeof(FractalTree))]
+[CustomEditor(typeof(Redenrizacao3D))]
 public class TreeGeneratorEditor : Editor {
 
     public override void OnInspectorGUI()
     {
-        FractalTree tree = (FractalTree)target;
+        Redenrizacao3D tree = (Redenrizacao3D)target;
 
         // If inspector is changed
         if(DrawDefaultInspector())

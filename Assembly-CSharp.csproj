@@ -47,9 +47,11 @@
   <ItemGroup>
      <Compile Include="Assets\ReadOnlyAttribute.cs" />
      <Compile Include="Assets\Scripts\CameraController.cs" />
-     <Compile Include="Assets\Scripts\FractalTree.cs" />
+     <Compile Include="Assets\Scripts\CrescimentoDaPlanta.cs" />
      <Compile Include="Assets\Scripts\MenuScript.cs" />
-     <Compile Include="Assets\Scripts\Slider.cs" />
+     <Compile Include="Assets\Scripts\Objetos\Caule.cs" />
+     <Compile Include="Assets\Scripts\Objetos\Vagem.cs" />
+     <Compile Include="Assets\Scripts\Redenrizacao3D.cs" />
      <None Include="Assets\Standard Assets\CrossPlatformInput\CrossPlatformInputGuidelines.txt" />
      <None Include="Assets\Standard Assets\Characters\ThirdPersonCharacter\ThirdPersonCharacterGuidelines.txt" />
      <None Include="Assets\Standard Assets\Cameras\CameraGuidelines.txt" />
