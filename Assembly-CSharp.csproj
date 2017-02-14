@@ -48,6 +48,7 @@
      <Compile Include="Assets\ReadOnlyAttribute.cs" />
      <Compile Include="Assets\Scripts\CameraController.cs" />
      <Compile Include="Assets\Scripts\CrescimentoDaPlanta.cs" />
+     <Compile Include="Assets\Scripts\GAL_DiaCriado.cs" />
      <Compile Include="Assets\Scripts\MenuScript.cs" />
      <Compile Include="Assets\Scripts\Objetos\Caule.cs" />
      <Compile Include="Assets\Scripts\Objetos\Vagem.cs" />

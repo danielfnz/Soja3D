@@ -19,7 +19,8 @@ public class Redenrizacao3D : MonoBehaviour {
 
   //Game object cilindro usado como referencia
   public GameObject Slide;
-  public GameObject cylinder;
+  public GameObject CaulePrincipal;
+  public GameObject CauleSecundario;
   public GameObject PrimeirasFolhas;
   public GameObject FolhaTrifoliada;
   public GameObject Flor;
@@ -31,7 +32,8 @@ public class Redenrizacao3D : MonoBehaviour {
   [Range(0,30)]
 
   private List<GameObject> objetos = new List<GameObject>();
-  private List<GameObject> primeirasObj = new List<GameObject>();
+  [SerializeField]
+  public List<GameObject> CauleSecundarios = new List<GameObject>();
   private List<point> cauleprincipal = new List<point>();
   private List<point> primeirasfolhas = new List<point>();
   private List<point> caulesecundario = new List<point>();
@@ -143,6 +145,7 @@ private void LimpaObjetos() {
   {
     Object.DestroyImmediate(obj);
   }
+  CauleSecundarios.Clear();
   objetos.Clear();
 }
 
@@ -150,7 +153,7 @@ private void LimpaObjetos() {
 private string AplicaRegras(string p_input)
 {
 	StringBuilder sb = new StringBuilder();
-    // Loop through characters in the input string
+  // Loop through characters in the input string
 	foreach (char c in p_input)	{
         // If character matches key in rules, then replace character with rhs of rule
 		if (regras.ContainsKey(c))
@@ -258,23 +261,24 @@ private void TransformaRegras(string p_input)
         }
       }
 
-      private void Redenriza3D(){
-	//Percorre lista de caule principal para criar o objeto
-       for (int i = 0; i < cauleprincipal.Count; i += 2)	{
+    private void Redenriza3D(){
+
+	     //Percorre lista de caule principal para criar o objeto
+      for (int i = 0; i < cauleprincipal.Count; i += 2)	{
         CriarCaulePrincipal(cauleprincipal[i], cauleprincipal[i + 1], 0.1f);
       }
-	//Percorre lista de caule secundario para criar o objeto
+	     //Percorre lista de caule secundario para criar o objeto
       for (int i = 0; i < caulesecundario.Count; i += 2)
       {
         CriarCauleSecundario(caulesecundario[i], caulesecundario[i + 1], 0.1f);
       }
 
-	//Percorre a lista de primeiras folhas passando o angulo e a posicao para ser criado o objeto
+	     //Percorre a lista de primeiras folhas passando o angulo e a posicao para ser criado o objeto
       for (int i = 0; i < primeirasfolhas.Count; i += 1){
         CriarPrimeiraFolha(primeirasfolhas[i].Angle,primeirasfolhas[i]);
       }
 
-	//Percorre lista de folhas trifoliadas
+	     //Percorre lista de folhas trifoliadas
       for (int i = 0; i < folhastrifoliadas.Count; i += 1)
       {
         CriarFolhaTrifoliada(folhastrifoliadas[i],folhastrifoliadas[i].Angle);
@@ -336,65 +340,70 @@ private void TransformaRegras(string p_input)
 
     private void CriarCaulePrincipal(point point1, point point2, float radius)
     {
-    //UnityEngine.Random.Range(0,3);
-    //Cria o cilindro, de acordo com o cilindro passado como referencia
-     GameObject newCylinder = (GameObject)Instantiate(cylinder);
-    //Seta esse cilindro como ativo, porque o cilindro passado por referencia esta invisivel
+      //UnityEngine.Random.Range(0,3);
+     //Cria o cilindro, de acordo com o cilindro passado como referencia
+     GameObject newCylinder = (GameObject)Instantiate(CaulePrincipal);
+     //Seta esse cilindro como ativo, porque o cilindro passado por referencia esta invisivel
      newCylinder.SetActive(true);
 
-    //Comprimento do ramo(1 ponto ao outro)
-     float length = Vector3.Distance(point2.Point, point1.Point);
-     radius = radius * length;
+     //Comprimento do ramo(1 ponto ao outro)
+     // float length = Vector3.Distance(point2.Point, point1.Point);
+     // radius = radius * length;
 
-    //Scale o tamanho do cylindro(x,y,z) y = comprimento
+      //Scale o tamanho do cylindro(x,y,z) y = comprimento
      Vector3 scale = new Vector3(0.03f, 0.05f , 0.03f);
      newCylinder.transform.localScale = scale;
 
-    //Seta o ponto inicial dos cilindros como o mesmo do seu ramo
+      //Seta o ponto inicial dos cilindros como o mesmo do seu ramo
      newCylinder.transform.position = point1.Point;
-    //Rotaciona de acordo com a regra + ou -
+     //Rotaciona de acordo com a regra + ou -
      newCylinder.transform.Rotate(point2.Angle);
-    //Coloca todos os ramos como Parent do Object Soja3D
+     //Coloca todos os ramos como Parent do Object Soja3D
      newCylinder.transform.parent = this.transform;
-    //Adicione o cilindro a Lista para que sejam deletados de acordo com a interação
+     //Adicione o cilindro a Lista para que sejam deletados de acordo com a interação
      objetos.Add(newCylinder);
    }
 
    private void CriarCauleSecundario(point point1, point point2, float radius)
    {
-    //UnityEngine.Random.Range(0,3);
-    //Cria o cilindro, de acordo com o cilindro passado como referencia
-     GameObject newCylinder = (GameObject)Instantiate(cylinder);
-    //Seta esse cilindro como ativo, porque o cilindro passado por referencia esta invisivel
+     //UnityEngine.Random.Range(0,3);
+     //Cria o cilindro, de acordo com o cilindro passado como referencia
+     GameObject newCylinder = (GameObject)Instantiate(CauleSecundario);
+     //Seta esse cilindro como ativo, porque o cilindro passado por referencia esta invisivel
      newCylinder.SetActive(true);
 
-    //Scale o tamanho do cylindro(x,y,z) y = comprimento
-     Vector3 scale = new Vector3(0.01f, 0.3f , 0.01f);
+     //Scale o tamanho do cylindro(x,y,z) y = comprimento
+     Vector3 scale = new Vector3(0.01f, 0.02f , 0.01f);
      newCylinder.transform.localScale = scale;
 
-    //Seta o ponto inicial dos cilindros como o mesmo do seu ramo
+     //Seta o ponto inicial dos cilindros como o mesmo do seu ramo
      newCylinder.transform.position = (point1.Point + new Vector3(0,0.05f,0));
-    //Rotaciona de acordo com a regra + ou -
+     //Rotaciona de acordo com a regra + ou -
      newCylinder.transform.Rotate(point2.Angle);
-    //Coloca todos os ramos como Parent do Object Soja3D
+     //Coloca todos os ramos como Parent do Object Soja3D
      newCylinder.transform.parent = this.transform;
-    //Adicione o cilindro a Lista para que sejam deletados de acordo com a interação
+     CrescimentoDaPlanta jota = GameObject.Find("SliderFenologia").GetComponent<CrescimentoDaPlanta>();
+     newCylinder.AddComponent<GAL_DiaCriado>();
+     newCylinder.GetComponent<GAL_DiaCriado>().diaCriado = (int)jota.valorSlider;
+     //Adiciona o gameobject dentro da lista
+     CauleSecundarios.Add(newCylinder);
+     //Adicione o cilindro a Lista para que sejam deletados de acordo com a interação
      objetos.Add(newCylinder);
    }
 
    private void CriarPrimeiraFolha(Vector3 angle, point point1)
    {
-    //UnityEngine.Random.Range(0,3);
-    //Cria o cilindro, de acordo com o cilindro passado como referencia
+      //UnityEngine.Random.Range(0,3);
+      //Cria o cilindro, de acordo com o cilindro passado como referencia
      GameObject folha = (GameObject)Instantiate(PrimeirasFolhas);
-    //Seta esse cilindro como ativo, porque o cilindro passado por referencia esta invisivel
+      //Seta esse cilindro como ativo, porque o cilindro passado por referencia esta invisivel
      folha.SetActive(true);
      folha.transform.Rotate(angle);
      folha.transform.position +=point1.Point;
 
-    //Coloca todos os ramos como Parent do Object Soja3D
+      //Coloca todos os ramos como Parent do Object Soja3D
      folha.transform.parent = this.transform;
-    //Adicione o cilindro a Lista para que sejam deletados de acordo com a interação
+     //Adicione o cilindro a Lista para que sejam deletados de acordo com a interação
      objetos.Add(folha);
    }
 
@@ -433,6 +442,4 @@ private void TransformaRegras(string p_input)
     //Adicione o cilindro a Lista para que sejam deletados de acordo com a interação
     objetos.Add(flor);
   }
-
-
 }

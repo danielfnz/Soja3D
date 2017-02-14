@@ -1,11 +1,11 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 
 public class CrescimentoDaPlanta : MonoBehaviour {
 
-	private float valorSlider;
+	public float valorSlider;
 	private int interacao;
     public GameObject soja3d;
     public Text valorSliderText;
@@ -17,9 +17,23 @@ public class CrescimentoDaPlanta : MonoBehaviour {
 		//Pega o valor e adiciona Dias, para ser mostrado acima do slider
 		valorSliderText.text =  valorSlider.ToString()+" Dias";
 	}
+    void Start (){
+        InvokeRepeating("AtualizaGalhos",0.5f,0.1f);
+    }
+    void AtualizaGalhos()
+    {
+        Redenrizacao3D j = soja3d.GetComponent<Redenrizacao3D>();
+        foreach(GameObject jota in j.CauleSecundarios)
+        {
+            int diaCriado = jota.GetComponent<GAL_DiaCriado>().diaCriado;
+            jota.transform.localScale = new Vector3(jota.transform.localScale.x, (0.4f * diaCriado) / ((int)valorSlider + 70), jota.transform.localScale.z);
+        }
+    }
 	
 	// Update is called once per frame
 	void Update () {
+
+
 
 	 if(valorSlider == 0 ){
         soja3d.GetComponent<Redenrizacao3D>().setInteracao(0);
@@ -108,6 +122,7 @@ public class CrescimentoDaPlanta : MonoBehaviour {
         soja3d.GetComponent<Redenrizacao3D>().setInteracao(20);
         soja3d.GetComponent<Redenrizacao3D>().setHabilitado(false);
     }
+    
     else if(valorSlider == 110 ){
         soja3d.GetComponent<Redenrizacao3D>().setInteracao(21);
         soja3d.GetComponent<Redenrizacao3D>().setHabilitado(false);
