@@ -1,11 +1,11 @@
+﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2008
-
-Project("{630D3772-2C4D-6E84-5C09-BC06977D4403}") = "Soja3D", "Assembly-CSharp-firstpass.csproj", "{4D861308-D6F4-63D4-D3F8-4D10E95D6FDA}"
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soja3D", "Assembly-CSharp-firstpass.csproj", "{4D861308-D6F4-63D4-D3F8-4D10E95D6FDA}"
 EndProject
-Project("{630D3772-2C4D-6E84-5C09-BC06977D4403}") = "Soja3D", "Assembly-CSharp.csproj", "{56135921-7155-1C62-81CC-45D5183CB306}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soja3D", "Assembly-CSharp.csproj", "{56135921-7155-1C62-81CC-45D5183CB306}"
 EndProject
-Project("{630D3772-2C4D-6E84-5C09-BC06977D4403}") = "Soja3D", "Assembly-CSharp-Editor.csproj", "{A279E7C5-F31D-E137-C159-EA1872F3C3D8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soja3D", "Assembly-CSharp-Editor.csproj", "{A279E7C5-F31D-E137-C159-EA1872F3C3D8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
