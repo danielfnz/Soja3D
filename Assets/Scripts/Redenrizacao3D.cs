@@ -6,14 +6,7 @@ using UnityEngine.UI;
 
 public class Redenrizacao3D : MonoBehaviour {
 
-  private bool habilitado = true;
-  private bool folhaTri = true;
-  public int interacao;
-  //Axioma
-  public string input = "A";
-  //Saida resultante das interacoes
-  private string regrasAtuais,result;
-
+  private int interacao =0;
   //Game object cilindro usado como referencia
   public GameObject Slide;
   public GameObject cylinder;
@@ -22,9 +15,7 @@ public class Redenrizacao3D : MonoBehaviour {
   public GameObject Flor;
   public GameObject Flor2;
   public GameObject Vagem;
-  //Dicionario par armazenar as regras
-  public Dictionary<char, string> regras = new Dictionary<char, string>();
-  [Range(0,30)]
+  public GameObject RegrasDeCrescimento;
 
   private List<GameObject> objetos = new List<GameObject>();
   private List<point> cauleprincipal = new List<point>();
@@ -46,88 +37,9 @@ public class Redenrizacao3D : MonoBehaviour {
     point1 = dir + point2;
     return point1;
   }
-
-  public void setHabilitado(bool valor) {
-   this.habilitado=valor;
-  }
-
-  public void setInteracao(int valor) {
-    this.interacao=valor;
-    GenerateTree();
-  }
-
-public void GenerateTree()
-{   
-  if(habilitado) {
-    LimpaObjetos();
-
-       	// Regras
-    if(interacao==1) {
-      regras.Add('A', "I[+z][-z]A");
-    }
-    else {
-     // regras.Add('A', "[+z][-z]B");
-      regras.Add('A', "I[+z][-z]B");
-      regras.Add('B', "[+C]D");
-
-      if(interacao % 2 == 0) { 
-        if(interacao>=12) {
-          regras.Add('C', "[-f+f-f]p[-L]");
-        }  
-        else {
-          regras.Add('C', "p[-L]");
-        }
-      }
-      else {
-        if(interacao>=12) {                   
-          regras.Add('C', "[+f-f+f]p[+L]");
-        }  
-        else {
-          regras.Add('C', "p[+L]");
-        }
-      }
-      regras.Add('D', "I[-C]A");
-    } 	
-    regrasAtuais = input;
-
-   //Transforma as regras em gramatica formal(sequencia)
-  for (int i = 0; i < interacao; i++){
-     regrasAtuais = AplicaRegras(regrasAtuais);
-   }
-
-  //Regras obtidas(Usado apenas na unity)
-   result = regrasAtuais;
-
-  //Transforma as regras em pontos na lista
-   TransformaRegras(regrasAtuais);
-
-  //Transforma os pontos em cilindros
-   Redenriza3D();
- }
-}
-
-private string AplicaRegras(string p_input)
-{
-	StringBuilder sb = new StringBuilder();
-    // Loop through characters in the input string
-	foreach (char c in p_input)	{
-        // If character matches key in rules, then replace character with rhs of rule
-		if (regras.ContainsKey(c))
-		{
-			sb.Append(regras[c]);
-		}
-        // If not, keep the character
-		else
-		{
-			sb.Append(c);
-		}
-	}
-    // Return string with rules applied
-	return sb.ToString();
-}
-
+ 
 //TRANSFORMA AS REGRAS EM PONTOS
-private void TransformaRegras(string p_input)
+public void TransformaRegras(string p_input)
 {
     //Cria uma pilha chamada returnValue
     //Passando a struct point como elemento
@@ -211,9 +123,8 @@ private void TransformaRegras(string p_input)
        }
 }
 
-private void LimpaObjetos() {
+public void LimpaObjetos() {
   //Limpa as listas de pontos e GameObjetos
-  regras.Clear();
   cauleprincipal.Clear();
   primeirasfolhas.Clear();
   caulesecundario.Clear();
@@ -226,7 +137,8 @@ private void LimpaObjetos() {
   objetos.Clear();
 }
 
-private void Redenriza3D(){
+public void Redenriza3D(){
+    interacao = RegrasDeCrescimento.GetComponent<RegrasDeCrescimento>().interacao;
 //Percorre lista de caule principal para criar o objeto
      for (int i = 0; i < cauleprincipal.Count; i += 2)	{
       CriarCaulePrincipal(cauleprincipal[i], cauleprincipal[i + 1], 0.1f);
@@ -383,7 +295,7 @@ private void Redenriza3D(){
 
   GameObject trifoliada = (GameObject)Instantiate(FolhaTrifoliada);
   //Seta esse cilindro como ativo, porque o cilindro passado por referencia esta invisivel
-  trifoliada.SetActive(folhaTri);
+  trifoliada.SetActive(trifoliada);
 
   //trifoliada.transform.Rotate(angle);
   //Seta o ponto inicial dos cilindros como o mesmo do seu ramo

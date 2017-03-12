@@ -48,7 +48,6 @@
   <ItemGroup>
      <Compile Include="Assets\Editor\CrossPlatformInput\CrossPlatformInputInitialize.cs" />
      <Compile Include="Assets\Editor\Readonly.cs" />
-     <Compile Include="Assets\Editor\TreeGeneratorEditor.cs" />
      <Compile Include="Assets\TimeOfDay&amp;WeatherSystem\Code\Editor\ToD_Editor.cs" />
      <Compile Include="Assets\TimeOfDay&amp;WeatherSystem\Code\Editor\WeatherCloudy_Editor.cs" />
      <Compile Include="Assets\TimeOfDay&amp;WeatherSystem\Code\Editor\WeatherController_Editor.cs" />

@@ -46,15 +46,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\PopulacaoPlantas.cs" />
+     <Compile Include="Assets\MacroNutrientes.cs" />
      <Compile Include="Assets\ReadOnlyAttribute.cs" />
      <Compile Include="Assets\Scripts\CameraController.cs" />
-     <Compile Include="Assets\Scripts\CrescimentoDaPlanta.cs" />
+     <Compile Include="Assets\Scripts\ControleTempo.cs" />
      <Compile Include="Assets\Scripts\MenuScript.cs" />
      <Compile Include="Assets\Scripts\Objetos\Caule.cs" />
      <Compile Include="Assets\Scripts\Objetos\FolhaScript.cs" />
      <Compile Include="Assets\Scripts\Objetos\VagemScript.cs" />
+     <Compile Include="Assets\Scripts\PopulacaoPlantas.cs" />
      <Compile Include="Assets\Scripts\Redenrizacao3D.cs" />
+     <Compile Include="Assets\Scripts\RegrasDeCrescimento.cs" />
+     <Compile Include="Assets\Scripts\UI\SliderNutrientes.cs" />
      <Compile Include="Assets\TimeOfDay&amp;WeatherSystem\Code\DocuScript.cs" />
      <Compile Include="Assets\TimeOfDay&amp;WeatherSystem\Code\TimeOfDay\ToD_Base.cs" />
      <Compile Include="Assets\TimeOfDay&amp;WeatherSystem\Code\TimeOfDay\ToD_Clock.cs" />
