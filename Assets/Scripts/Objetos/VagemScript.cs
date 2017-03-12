@@ -14,7 +14,7 @@ public class VagemScript : MonoBehaviour {
 	rend2 = transform.GetChild(1).GetComponent<MeshRenderer>();
 
 	}
-	public void changeMaterial (int index){
+	public void changeMaterial(int index){
 		    rend1.sharedMaterial = materials[index];
 		    rend2.sharedMaterial = materials[index];
 	}

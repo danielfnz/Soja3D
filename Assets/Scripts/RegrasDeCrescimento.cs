@@ -5,9 +5,9 @@ using System.Text;
 
 public class RegrasDeCrescimento : MonoBehaviour {
 
-  private bool habilitado = true;
   public GameObject Redenrizacao3D;
-  public int interacao;
+  private bool habilitado = true;
+  public int interacao; //Interacao em qual o LSystem esta
   private string input = "A";   //Axioma
   public string regrasAtuais,result;   //Saida resultante das interacoes
 
@@ -63,14 +63,14 @@ public class RegrasDeCrescimento : MonoBehaviour {
   		} 	
   		regrasAtuais = input;
 
-   //Transforma as regras em gramatica formal(sequencia)
+      //Transforma as regras em gramatica formal(sequencia)
   		for (int i = 0; i < interacao; i++){
   			regrasAtuais = AplicaRegras(regrasAtuais);
   		}
 
-  //Transforma as regras em pontos na lista
+      //Transforma as regras em pontos na lista
   		Redenrizacao3D.GetComponent<Redenrizacao3D>().TransformaRegras(regrasAtuais);
-  //Transforma os pontos em cilindros
+      //Transforma os pontos em cilindros
   		Redenrizacao3D.GetComponent<Redenrizacao3D>().Redenriza3D();
   	}
   }

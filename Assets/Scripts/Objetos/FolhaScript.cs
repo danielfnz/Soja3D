@@ -11,7 +11,7 @@ public class FolhaScript : MonoBehaviour {
 	rend1 = transform.GetChild(0).GetComponent<MeshRenderer>();
 
 	}
-	public void changeMaterialFolha (int index){
+	public void changeMaterialFolha(int index){
 		    rend1.sharedMaterial = materials[index];
 	}
 }
