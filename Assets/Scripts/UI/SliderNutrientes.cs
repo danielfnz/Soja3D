@@ -14,7 +14,10 @@ public class SliderNutrientes : MonoBehaviour {
   public Text potassio;
   public Text enxofre;
   public Text ph;
-  public Text textura;
+  public Text teor;
+  public Text pmel1;
+  public Text pmel;
+  public Text prem;
 
 
   public void changeValorSlideCalcio(float newValue){
@@ -59,10 +62,28 @@ public class SliderNutrientes : MonoBehaviour {
   //Pega o valor e adiciona Dias, para ser mostrado acima do slider
     ph.text =  System.String.Format("{0:0.00}",valorSlider);
   } 
-    public void changeValorSlideTextura(float newValue){
+    public void changeValorSlideTeor(float newValue){
   //Captura o valor atual do slider
     valorSlider = newValue;
   //Pega o valor e adiciona Dias, para ser mostrado acima do slider
-    textura.text =  System.String.Format("{0:0.00}",valorSlider);
-  }   	
+    teor.text =  System.String.Format("{0:0.00}",valorSlider);
+  }   
+  public void changeValorSlidePmel1(float newValue){
+  //Captura o valor atual do slider
+    valorSlider = newValue;
+  //Pega o valor e adiciona Dias, para ser mostrado acima do slider
+    pmel1.text =  System.String.Format("{0:0.00}",valorSlider);
+  }
+    public void changeValorSlidePmel(float newValue){
+  //Captura o valor atual do slider
+    valorSlider = newValue;
+  //Pega o valor e adiciona Dias, para ser mostrado acima do slider
+    pmel.text =  System.String.Format("{0:0.00}",valorSlider);
+  }  
+    public void changeValorSlidePrem(float newValue){
+  //Captura o valor atual do slider
+    valorSlider = newValue;
+  //Pega o valor e adiciona Dias, para ser mostrado acima do slider
+    prem.text =  System.String.Format("{0:0.00}",valorSlider);
+  }      	
 }

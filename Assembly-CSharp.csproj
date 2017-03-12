@@ -58,6 +58,7 @@
      <Compile Include="Assets\Scripts\Redenrizacao3D.cs" />
      <Compile Include="Assets\Scripts\RegrasDeCrescimento.cs" />
      <Compile Include="Assets\Scripts\UI\SliderNutrientes.cs" />
+     <Compile Include="Assets\TexturaSolo.cs" />
      <Compile Include="Assets\TimeOfDay&amp;WeatherSystem\Code\DocuScript.cs" />
      <Compile Include="Assets\TimeOfDay&amp;WeatherSystem\Code\TimeOfDay\ToD_Base.cs" />
      <Compile Include="Assets\TimeOfDay&amp;WeatherSystem\Code\TimeOfDay\ToD_Clock.cs" />
