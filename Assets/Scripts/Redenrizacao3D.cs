@@ -28,7 +28,7 @@ public class Redenrizacao3D : MonoBehaviour {
 
   private Vector3 ScalaCaulePrincipal = new Vector3(0.02f, 0.04f , 0.02f);
   private Vector3 DistanciaCaulePrincipal = new Vector3(0, 0.08f, 0);
-  private Vector3 ScalaCauleSecundario = new Vector3(0.01f, 0.3f , 0.01f);
+  private Vector3 ScalaCauleSecundario = new Vector3(0.01f, 0.0f, 0.01f);
   private Vector3 ScalaFlorR1 = new Vector3(0.008f,0.008f,0.008f);
   private Vector3 ScalaFlorR2 = new Vector3(0.01f,0.01f,0.01f);
   private Vector3 ScalaVagemR3 = new Vector3(0.03f,0.03f,0.03f);
@@ -36,6 +36,9 @@ public class Redenrizacao3D : MonoBehaviour {
   private Vector3 ScalaVagemR5 = new Vector3(0.09f,0.09f,0.09f);
   private Vector3 ScalaVagemR6 = new Vector3(0.18f,0.18f,0.18f);
   private Vector3 ScalaVagemR7 = new Vector3(0.18f,0.18f,0.18f);
+
+   public List<GameObject> caulesSecundarios = new List<GameObject>();
+
 
   private struct point {
     public point(Vector3 rP, Vector3 rA, float rL) { Point = rP; Angle = rA; BranchLength = rL; }
@@ -189,11 +192,17 @@ public class Redenrizacao3D : MonoBehaviour {
     for (int i = 0; i < cauleprincipal.Count; i += 2)	{
       CriarCaulePrincipal(cauleprincipal[i], cauleprincipal[i + 1], 0.1f);
     }
-    //Percorre lista de caule secundario para criar o objeto
-    for (int i = 0; i < caulesecundario.Count; i += 2)
-    {
-      CriarCauleSecundario(caulesecundario[i], caulesecundario[i + 1], 0.1f);
-    }
+      //Percorre lista de caule secundario para criar o objeto
+        caulesSecundarios.Clear();
+        GameObject teste;
+        for (int i = 0; i < caulesecundario.Count; i += 2)
+        {
+            print("entrou aqui");
+            teste =  CriarCauleSecundario(caulesecundario[i], caulesecundario[i + 1], 0.1f);
+            teste.name = "Galho " + (i/2).ToString();
+            //caulesSecundarios.Add(CriarCauleSecundario(caulesecundario[i], caulesecundario[i + 1], 0.1f));
+            teste.AddComponent<GAL_CrescerGalho>();
+        }
 
     if(interacao <10) {
     //Percorre a lista de primeiras folhas passando o angulo e a posicao para ser criado o objeto
@@ -208,65 +217,69 @@ public class Redenrizacao3D : MonoBehaviour {
       CriarFolhaTrifoliada(folhastrifoliadas[i],folhastrifoliadas[i].Angle);
     }
 
-    if(interacao==12){
-    //R1
-      for (int i = 0; i < flores.Count; i += 1)
-      {
-        CriarFlor(flores[i],flores[i].Angle, Flor,ScalaFlorR1);
-      }
+        if (interacao == 12)
+        {
+            //R1
+            for (int i = 0; i < flores.Count-3; i += 1)
+            {
+                CriarFlor(flores[i], flores[i].Angle, Flor, ScalaFlorR1);
+            }
+        }
+        if (interacao == 13)
+        {
+            //R2
+            for (int i = 0; i < flores.Count-3; i += 1)
+            {
+                CriarFlor(flores[i], flores[i].Angle, Flor2, ScalaFlorR2);
+            }
+        }
+
+        //CRIA VAGEM
+        if (interacao == 15)
+        {
+            //R3
+            for (int i = 0; i < flores.Count-3; i += 1)
+            {
+                CriarFlor(flores[i], flores[i].Angle, Vagem, ScalaVagemR3);
+            }
+        }
+        if (interacao == 17)
+        {
+            //R4
+            for (int i = 0; i < flores.Count-3; i += 1)
+            {
+                CriarFlor(flores[i], flores[i].Angle, Vagem, ScalaVagemR4);
+            }
+        }
+
+        if (interacao == 18)
+        {
+            //R5
+            for (int i = 0; i < flores.Count-3; i += 1)
+            {
+                CriarFlor(flores[i], flores[i].Angle, Vagem, ScalaVagemR5);
+            }
+        }
+
+        if (Slide.GetComponent<Slider>().value == 107)
+        {
+
+            //R6
+            for (int i = 0; i < flores.Count-3; i += 1)
+            {
+                CriarFlor(flores[i], flores[i].Angle, Vagem, ScalaVagemR6);
+            }
+        }
+
+        if (Slide.GetComponent<Slider>().value == 118)
+        {
+            //R7
+            for (int i = 0; i < flores.Count-3; i += 1)
+            {
+                CriarFlor(flores[i], flores[i].Angle, Vagem, ScalaVagemR7);
+            }
+        }
     }
-    if(interacao==13){
-    //R2
-      for (int i = 0; i < flores.Count; i += 1)
-      {
-        CriarFlor(flores[i],flores[i].Angle, Flor2,ScalaFlorR2);
-      }
-    } 
-
-    //CRIA VAGEM
-    if(interacao==15){
-     //R3
-      for (int i = 0; i < flores.Count; i += 1)
-      {
-        CriarFlor(flores[i],flores[i].Angle, Vagem, ScalaVagemR3);
-      }
-    } 
-    if(interacao==17){
-    //R4
-      for (int i = 0; i < flores.Count; i += 1)
-      {
-        CriarFlor(flores[i],flores[i].Angle, Vagem, ScalaVagemR4);
-      }
-    } 
-
-    if(interacao==18){
-    //R5
-      for (int i = 0; i < flores.Count; i += 1)
-      {
-        CriarFlor(flores[i],flores[i].Angle, Vagem, ScalaVagemR5);
-      }
-    } 
-
-    if(Slide.GetComponent<Slider>().value == 107){
-      for(int i=0;i<30;i++){
-         folhastrifoliadas.RemoveAt(i);
-      }
-    //R6
-      for (int i = 0; i < flores.Count; i += 1)
-      {
-        CriarFlor(flores[i],flores[i].Angle, Vagem, ScalaVagemR6);
-      }
-    } 
-
-    if(Slide.GetComponent<Slider>().value == 118){
-     //R7
-
-      for (int i = 0; i < flores.Count; i += 1)
-      {
-        CriarFlor(flores[i],flores[i].Angle, Vagem, ScalaVagemR7);
-      }
-    } 
-  }
 
   private void CriarCaulePrincipal(point point1, point point2, float radius)
   {
@@ -298,14 +311,13 @@ public class Redenrizacao3D : MonoBehaviour {
    objetos.Add(newCaule);
  }
 
- private void CriarCauleSecundario(point point1, point point2, float radius)
+ private GameObject CriarCauleSecundario(point point1, point point2, float radius)
  {
   //UnityEngine.Random.Range(0,3);
   //Cria o cilindro, de acordo com o cilindro passado como referencia
    GameObject newCaule = (GameObject)Instantiate(Caule);
   //Seta esse cilindro como ativo, porque o cilindro passado por referencia esta invisivel
    newCaule.SetActive(true);
-
   //Scale o tamanho do cylindro(x,y,z) y = comprimento
    Vector3 scale = ScalaCauleSecundario;
    newCaule.transform.localScale = scale;
@@ -318,6 +330,8 @@ public class Redenrizacao3D : MonoBehaviour {
    newCaule.transform.parent = this.transform;
   //Adicione o cilindro a Lista para que sejam deletados de acordo com a interação
    objetos.Add(newCaule);
+    newCaule.name = "Caule secundario";
+    return newCaule;
  }
 
  private void CriarPrimeiraFolha(Vector3 angle, point point1)

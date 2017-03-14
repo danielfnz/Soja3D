@@ -49,6 +49,7 @@
      <Compile Include="Assets\ReadOnlyAttribute.cs" />
      <Compile Include="Assets\Scripts\Camera\CameraController.cs" />
      <Compile Include="Assets\Scripts\ControleTempo.cs" />
+     <Compile Include="Assets\Scripts\GAL_CrescerGalho.cs" />
      <Compile Include="Assets\Scripts\MacroNutrientes.cs" />
      <Compile Include="Assets\Scripts\Menu\MenuScript.cs" />
      <Compile Include="Assets\Scripts\Objetos\Caule.cs" />
