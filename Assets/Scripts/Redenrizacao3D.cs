@@ -17,6 +17,7 @@ public class Redenrizacao3D : MonoBehaviour {
   public GameObject Flor2;
   public GameObject Vagem;
   public GameObject RegrasDeCrescimento;
+  public Material[] materialsFolha;
 
   private List<GameObject> objetos = new List<GameObject>();
   private List<point> cauleprincipal = new List<point>();
@@ -26,6 +27,7 @@ public class Redenrizacao3D : MonoBehaviour {
   private List<point> flores  = new List<point>();
 
   private Vector3 ScalaCaulePrincipal = new Vector3(0.02f, 0.04f , 0.02f);
+  private Vector3 DistanciaCaulePrincipal = new Vector3(0, 0.08f, 0);
   private Vector3 ScalaCauleSecundario = new Vector3(0.01f, 0.3f , 0.01f);
   private Vector3 ScalaFlorR1 = new Vector3(0.008f,0.008f,0.008f);
   private Vector3 ScalaFlorR2 = new Vector3(0.01f,0.01f,0.01f);
@@ -51,20 +53,34 @@ public class Redenrizacao3D : MonoBehaviour {
 
   public void DeficienciaCalcio(){
     //folha cresce enrolada(mais pequena).
-    //Quando há deficiencia, este deve fornecer o valor de scala e materiais para os objetos
+    
   }
   public void DeficienciaMagnesio(){
-    //Folhas pequenas e ficam da cor amarela e com nervuras verdes.
+    FolhaTrifoliada.transform.GetChild(0).GetComponent<MeshRenderer>().sharedMaterial = materialsFolha[3];
+    //Folhas pequenas e ficam da cor amarela e com nervuras verdes. ok
   }
   public void DeficienciaPotassio(){
-    //Folhas ficam amarela e com necrose
-    //Reduz quantidade e e tamanho dos graos
+    //OK
+    FolhaTrifoliada.transform.GetChild(0).GetComponent<MeshRenderer>().sharedMaterial = materialsFolha[4];
+    ScalaVagemR5 -= new Vector3(0.04f,0.04f,0.04f);
+    ScalaVagemR6 -= new Vector3(0.10f,0.10f,0.10f);
+    ScalaVagemR7 -= new Vector3(0.10f,0.10f,0.10f);
   }
   public void DeficienciaFosforo(){
-    //Crescimento Reduzido
+    //Crescimento Reduzido ok
+    //FALTA COLOCAR A FLOR NO SEU LUGAR
+  DistanciaCaulePrincipal = new Vector3(0, 0.05f, 0);
+  ScalaCaulePrincipal -= new Vector3(0.01f, 0.01f , 0.01f);
+  ScalaCauleSecundario -= new Vector3(0.005f, 0.2f , 0.005f);
+  ScalaFlorR1 -= new Vector3(0.002f,0.002f,0.002f);
+  ScalaFlorR2 -= new Vector3(0.002f,0.002f,0.002f);
+  ScalaVagemR5 -= new Vector3(0.04f,0.04f,0.04f);
+  ScalaVagemR6 -= new Vector3(0.10f,0.10f,0.10f);
+  ScalaVagemR7 -= new Vector3(0.10f,0.10f,0.10f);
   }  
   public void DeficienciaEnxofre(){
-  //Folhas novas ficam pequenas e ficam verde claro
+  FolhaTrifoliada.transform.GetChild(0).GetComponent<MeshRenderer>().sharedMaterial = materialsFolha[2];
+  //Folhas novas ficam pequenas e ficam verde claro ok
 
   }
 
@@ -85,7 +101,7 @@ public class Redenrizacao3D : MonoBehaviour {
 
             case 'I': //Cria Caule principal
             cauleprincipal.Add(lastPoint);
-            point caule = new point(lastPoint.Point + new Vector3(0, 0.08f, 0), lastPoint.Angle, 0.5f);
+            point caule = new point(lastPoint.Point + DistanciaCaulePrincipal, lastPoint.Angle, 0.5f);
 
             //Efeito retorcido do caule     
             caule.Angle.x = lastPoint.Angle.y + UnityEngine.Random.Range(-15, 15);
@@ -232,7 +248,9 @@ public class Redenrizacao3D : MonoBehaviour {
     } 
 
     if(Slide.GetComponent<Slider>().value == 107){
-
+      for(int i=0;i<30;i++){
+         folhastrifoliadas.RemoveAt(i);
+      }
     //R6
       for (int i = 0; i < flores.Count; i += 1)
       {
@@ -242,6 +260,7 @@ public class Redenrizacao3D : MonoBehaviour {
 
     if(Slide.GetComponent<Slider>().value == 118){
      //R7
+
       for (int i = 0; i < flores.Count; i += 1)
       {
         CriarFlor(flores[i],flores[i].Angle, Vagem, ScalaVagemR7);

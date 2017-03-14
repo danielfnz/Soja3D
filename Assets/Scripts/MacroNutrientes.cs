@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class MacroNutrientes : MonoBehaviour {
 
+	public GameObject Redenrizacao3D;
+
 	private float pH;//0 fraco - 1 media - 2 alto
 	private float P; //fosforo
 	private float K; //potassio
@@ -95,10 +97,12 @@ public class MacroNutrientes : MonoBehaviour {
 				PObj.transform.GetChild(2).GetComponent<Slider>().maxValue = 30; 
 
 				if(pMelValor <=6.0){
+					Redenrizacao3D.GetComponent<Redenrizacao3D>().DeficienciaFosforo();
 					print("Fosforo muito baixo");
 					
 				}
 				if(pMelValor>=6.1 && pMelValor<=12){
+					Redenrizacao3D.GetComponent<Redenrizacao3D>().DeficienciaFosforo();
 					print("Fosforo baixo");
 
 				}
@@ -118,10 +122,12 @@ public class MacroNutrientes : MonoBehaviour {
 			if(TeorArgilaValor>=16 && TeorArgilaValor<=35){
 				PObj.transform.GetChild(2).GetComponent<Slider>().maxValue = 25; 
 				if(pMelValor <=5){
+					Redenrizacao3D.GetComponent<Redenrizacao3D>().DeficienciaFosforo();
 					print("Fosforo muito baixo");
 					
 				}
 				if(pMelValor>=5.1 && pMelValor<=10){
+					Redenrizacao3D.GetComponent<Redenrizacao3D>().DeficienciaFosforo();
 					print("Fosforo baixo");
 
 				}
@@ -141,10 +147,12 @@ public class MacroNutrientes : MonoBehaviour {
 			if(TeorArgilaValor>=36 && TeorArgilaValor<=60){
 				PObj.transform.GetChild(2).GetComponent<Slider>().maxValue = 20; 
 				if(pMelValor <=3){
+					Redenrizacao3D.GetComponent<Redenrizacao3D>().DeficienciaFosforo();
 					print("Fosforo muito baixo");
 					
 				}
 				if(pMelValor>=3.1 && pMelValor<=5){
+					Redenrizacao3D.GetComponent<Redenrizacao3D>().DeficienciaFosforo();
 					print("Fosforo baixo");
 
 				}
@@ -164,10 +172,12 @@ public class MacroNutrientes : MonoBehaviour {
 			if(TeorArgilaValor >=60){
 				PObj.transform.GetChild(2).GetComponent<Slider>().maxValue = 10; 
 				if(pMelValor <=2.0){
+					Redenrizacao3D.GetComponent<Redenrizacao3D>().DeficienciaFosforo();
 					print("Fosforo muito baixo");
 					
 				}
 				if(pMelValor>=2.1 && pMelValor<=3){
+					Redenrizacao3D.GetComponent<Redenrizacao3D>().DeficienciaFosforo();
 					print("Fosforo baixo");
 
 				}
@@ -198,10 +208,12 @@ public class MacroNutrientes : MonoBehaviour {
 			VR = (pMelValor / NiCri) * 100;	
 
 			if(VR <=50){
+				Redenrizacao3D.GetComponent<Redenrizacao3D>().DeficienciaFosforo();
 				print("Fosforo muito baixo");
 
 			}
 			if(VR>=50.1 && VR<=72.5){
+				Redenrizacao3D.GetComponent<Redenrizacao3D>().DeficienciaFosforo();
 				print("Fosforo baixo");
 
 			}
@@ -306,9 +318,11 @@ public class MacroNutrientes : MonoBehaviour {
 		this.CaCTC = float.Parse(System.String.Format("{0:0.00}",this.CaCTC));
 
 		if(CaCTC <= 15){
+			Redenrizacao3D.GetComponent<Redenrizacao3D>().DeficienciaCalcio();
 			print ("Calcio muito Baixo "+ CaCTC);
 		}
 		if(CaCTC>=16 && CaCTC <=25) {
+			Redenrizacao3D.GetComponent<Redenrizacao3D>().DeficienciaCalcio();
 			print ("Calcio baixo "+ CaCTC);
 		}
 		if(CaCTC>=26 && CaCTC <=40) {
@@ -324,6 +338,7 @@ public class MacroNutrientes : MonoBehaviour {
 		this.MgCTC = float.Parse(System.String.Format("{0:0.00}",this.MgCTC));
 
 		if(MgCTC <= 5){
+			Redenrizacao3D.GetComponent<Redenrizacao3D>().DeficienciaMagnesio();
 			print ("Magnesio muito Baixo "+MgCTC);
 		}
 		if(MgCTC>=6 && MgCTC <=10) {
@@ -337,29 +352,18 @@ public class MacroNutrientes : MonoBehaviour {
 		}
 	}
 
-/*	public void SetHidrogenioCTC(){
-		this.HalCTC = (Hal / CTCTotal) *100;
-		this.HalCTC = float.Parse(System.String.Format("{0:0.00}",this.HalCTC));
 
-		if(HalCTC <45){
-			print ("Hidrogenio +Al Baixo "+HalCTC);
-		}
-		if(HalCTC>=45 && HalCTC <=100) {
-			print ("Hidrogenio +Al medio "+HalCTC);
-		}
-		if (HalCTC > 100){
-			print ("Hidrogenio +Al alto "+HalCTC);
-		}
-	}*/			
 
 	public void SetPotassioCTC(){
 		this.KCTC = (K/ CTCTotal) * 100;
 		this.KCTC = float.Parse(System.String.Format("{0:0.00}",this.KCTC));
 
 		if(KCTC <=1){
+			Redenrizacao3D.GetComponent<Redenrizacao3D>().DeficienciaPotassio();
 			print ("Potassio muito Baixo "+KCTC);
 		}
 		if(KCTC >=1.1 && KCTC <=2){
+			Redenrizacao3D.GetComponent<Redenrizacao3D>().DeficienciaPotassio();
 			print ("Potassio  Baixo "+KCTC);
 		}
 		if(KCTC>=2.1 && KCTC <=3) {
@@ -372,6 +376,7 @@ public class MacroNutrientes : MonoBehaviour {
 
 	public void SetEnxofre(){
 		if(S<=4) {
+			Redenrizacao3D.GetComponent<Redenrizacao3D>().DeficienciaEnxofre();
 			print ("Enxofre baixo "+S);
 		}
 		if(S>=5 && S <=9) {
