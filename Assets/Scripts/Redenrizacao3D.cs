@@ -11,6 +11,7 @@ public class Redenrizacao3D : MonoBehaviour {
   public GameObject Menu;
   public GameObject Slide;
   public GameObject Caule;
+  public GameObject CauleSecundarioObj;
   public GameObject PrimeirasFolhas;
   public GameObject FolhaTrifoliada;
   public GameObject Flor;
@@ -28,7 +29,7 @@ public class Redenrizacao3D : MonoBehaviour {
 
   private Vector3 ScalaCaulePrincipal = new Vector3(0.02f, 0.04f , 0.02f);
   private Vector3 DistanciaCaulePrincipal = new Vector3(0, 0.08f, 0);
-  private Vector3 ScalaCauleSecundario = new Vector3(0.01f, 0.0f, 0.01f);
+  public Vector3 ScalaCauleSecundario;
   private Vector3 ScalaFlorR1 = new Vector3(0.008f,0.008f,0.008f);
   private Vector3 ScalaFlorR2 = new Vector3(0.01f,0.01f,0.01f);
   private Vector3 ScalaVagemR3 = new Vector3(0.03f,0.03f,0.03f);
@@ -39,6 +40,15 @@ public class Redenrizacao3D : MonoBehaviour {
 
    public List<GameObject> caulesSecundarios = new List<GameObject>();
 
+   void Start(){
+    ScalaCauleSecundario = new Vector3(0.01f, 0.3f, 0.01f);
+   }
+
+   /*
+   FIX:    MODELAR A VAGEM E A FLOR
+          INTERACAO NO MODO POPULAÇÃO
+          ARRUMAR AUTO PLAY
+   */
 
   private struct point {
     public point(Vector3 rP, Vector3 rA, float rL) { Point = rP; Angle = rA; BranchLength = rL; }
@@ -59,8 +69,8 @@ public class Redenrizacao3D : MonoBehaviour {
     
   }
   public void DeficienciaMagnesio(){
+    //ok
     FolhaTrifoliada.transform.GetChild(0).GetComponent<MeshRenderer>().sharedMaterial = materialsFolha[3];
-    //Folhas pequenas e ficam da cor amarela e com nervuras verdes. ok
   }
   public void DeficienciaPotassio(){
     //OK
@@ -70,8 +80,8 @@ public class Redenrizacao3D : MonoBehaviour {
     ScalaVagemR7 -= new Vector3(0.10f,0.10f,0.10f);
   }
   public void DeficienciaFosforo(){
-    //Crescimento Reduzido ok
-    //FALTA COLOCAR A FLOR NO SEU LUGAR
+    //Crescimento Reduzido ok(FALTA IMPLEMENTAR O PLAY)
+    //FALTA COLOCAR A folha NO SEU LUGAR
   DistanciaCaulePrincipal = new Vector3(0, 0.05f, 0);
   ScalaCaulePrincipal -= new Vector3(0.01f, 0.01f , 0.01f);
   ScalaCauleSecundario -= new Vector3(0.005f, 0.2f , 0.005f);
@@ -83,7 +93,7 @@ public class Redenrizacao3D : MonoBehaviour {
   }  
   public void DeficienciaEnxofre(){
   FolhaTrifoliada.transform.GetChild(0).GetComponent<MeshRenderer>().sharedMaterial = materialsFolha[2];
-  //Folhas novas ficam pequenas e ficam verde claro ok
+  //OK
 
   }
 
@@ -200,6 +210,7 @@ public class Redenrizacao3D : MonoBehaviour {
             print("entrou aqui");
             teste =  CriarCauleSecundario(caulesecundario[i], caulesecundario[i + 1], 0.1f);
             teste.name = "Galho " + (i/2).ToString();
+
             //caulesSecundarios.Add(CriarCauleSecundario(caulesecundario[i], caulesecundario[i + 1], 0.1f));
             teste.AddComponent<GAL_CrescerGalho>();
         }
@@ -211,13 +222,7 @@ public class Redenrizacao3D : MonoBehaviour {
       }
     }
 
-    //Percorre lista de folhas trifoliadas
-    for (int i = 0; i < folhastrifoliadas.Count; i += 1)
-    {
-      CriarFolhaTrifoliada(folhastrifoliadas[i],folhastrifoliadas[i].Angle);
-    }
-
-        if (interacao == 12)
+       if (interacao == 12)
         {
             //R1
             for (int i = 0; i < flores.Count-3; i += 1)
@@ -315,13 +320,11 @@ public class Redenrizacao3D : MonoBehaviour {
  {
   //UnityEngine.Random.Range(0,3);
   //Cria o cilindro, de acordo com o cilindro passado como referencia
-   GameObject newCaule = (GameObject)Instantiate(Caule);
+   GameObject newCaule = (GameObject)Instantiate(CauleSecundarioObj);
   //Seta esse cilindro como ativo, porque o cilindro passado por referencia esta invisivel
    newCaule.SetActive(true);
   //Scale o tamanho do cylindro(x,y,z) y = comprimento
-   Vector3 scale = ScalaCauleSecundario;
-   newCaule.transform.localScale = scale;
-
+ 
   //Seta o ponto inicial dos cilindros como o mesmo do seu ramo
    newCaule.transform.position = (point1.Point + new Vector3(0,0.05f,0));
   //Rotaciona de acordo com a regra + ou -
@@ -358,7 +361,7 @@ public class Redenrizacao3D : MonoBehaviour {
 
     GameObject trifoliada = (GameObject)Instantiate(FolhaTrifoliada);
     //Seta esse cilindro como ativo, porque o cilindro passado por referencia esta invisivel
-    trifoliada.SetActive(trifoliada);
+    trifoliada.SetActive(false);
 
     //trifoliada.transform.Rotate(angle);
     //Seta o ponto inicial dos cilindros como o mesmo do seu ramo

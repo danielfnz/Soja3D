@@ -39,4 +39,9 @@ public class PopulacaoPlantas : MonoBehaviour {
 		}   
 	}
 
+	void LateUpdate (){
+    if(Input.anyKeyDown){
+      GameObject.Find("Controles").SetActive(false);
+    }
+  }
 }

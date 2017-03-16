@@ -6,9 +6,14 @@ public class GAL_CrescerGalho : MonoBehaviour
 {
     public int diaQueCresceu = 0;
     public int diaQueParaDeCrescer = 24;
+    private Vector3 v;
+    private Vector3 tamanhoFolhaGrande = new Vector3(3.2f,1,0.12f);
+    private Vector3 tamanhoFolhaInicial = new Vector3(0.1f,1,0.12f);
     // Use this for initialization
     void Start()
     {
+        v = GameObject.Find("Renderizacao3D").GetComponent<Redenrizacao3D>().ScalaCauleSecundario;
+ 
         print(name);
         if (int.Parse(gameObject.name.Split(' ')[1].ToString()) == 0)
         diaQueCresceu = 12;
@@ -39,10 +44,14 @@ public class GAL_CrescerGalho : MonoBehaviour
     {
         if(GameObject.Find("ControleDoTempo").GetComponent<UnityEngine.UI.Slider>().value > diaQueCresceu) {
             diaQueParaDeCrescer = diaQueCresceu + 24;
-            if (GameObject.Find("ControleDoTempo").GetComponent<UnityEngine.UI.Slider>().value <= diaQueParaDeCrescer)
-            transform.localScale = new Vector3(0.01f, (float)(0.01 * ((GameObject.Find("ControleDoTempo").GetComponent<UnityEngine.UI.Slider>().value) - diaQueCresceu) ), 0.01f);
-            else
-            transform.localScale = new Vector3(0.01f, 0.3f, 0.01f);
+            if (GameObject.Find("ControleDoTempo").GetComponent<UnityEngine.UI.Slider>().value <= diaQueParaDeCrescer){
+            transform.localScale = new Vector3(v.x, (float)(v.z * ((GameObject.Find("ControleDoTempo").GetComponent<UnityEngine.UI.Slider>().value) - diaQueCresceu) ), v.z);
+                    transform.GetChild(1).localScale = new Vector3(tamanhoFolhaInicial.x *  ((GameObject.Find("ControleDoTempo").GetComponent<UnityEngine.UI.Slider>().value) - diaQueCresceu),1,0.12f);
+            }
+            else {
+            transform.localScale = v;
+            transform.GetChild(1).localScale = tamanhoFolhaGrande;
+            }
         }
     }
 }
