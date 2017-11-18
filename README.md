@@ -6,4 +6,4 @@ Universidade Federal de Goias - Regional Jataí
 Daniel Leonardo de Souza Teixeira
 
 # Soja3D em funcionamento
-https://soja3d-5aaf8.firebaseapp.com/
+https://danielfnz.com.br/soja3d
