@@ -9,4 +9,4 @@ Unity 3D
 Daniel Leonardo de Souza Teixeira
 
 # Soja3D em funcionamento
-https://danielfnz.com.br/soja3d
+http://danielfnz.herokuapp.com/soja3d/
